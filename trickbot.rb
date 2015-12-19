@@ -31,7 +31,9 @@ trickbot = Cinch::Bot.new do
       TrickBot::PageTitles,
     ]
     c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a }
-    c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a }
+    c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
+                                             :api_key => nil, # TODO replace with your developer API key
+                                           }
   end
 end
 
