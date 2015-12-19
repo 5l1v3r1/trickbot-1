@@ -13,7 +13,6 @@ module TrickBot
 
     def initialize(*args)
       super
-      @google = Google.new
 
       # setup a logger
       @logger = Logger.new('./log/youtube.log', 12, 'monthly')
@@ -23,6 +22,8 @@ module TrickBot
 
     def on_connect(c)
       @channel_whitelist = config[:channel_whitelist] || raise("Missing required argument: :channel_whitelist")
+      api_key = config[:api_key] || raise("Missing required argument: :api_key")
+      @google = Google.new(api_key)
     end
 
     def show_title(m, url, vid_id)

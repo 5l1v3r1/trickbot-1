@@ -5,11 +5,16 @@ require 'json'
 
 class Google
   API_HOST = 'https://www.googleapis.com'
-  API_KEY = 'GETYOUROWNAPIKEY!'
 
   YOUTUBE_VIDEOS_URL = 'youtube/v3/videos'
 
-  def initialize
+  def initialize(api_key=nil)
+    # grab the API key
+    if api_key.nil?
+      raise('Please provide Google Developer API key')
+    end 
+    @api_key = api_key
+
     # setup a logger
     @logger = Logger.new('./log/google.log', 12, 'monthly')
     @logger.level = Logger::DEBUG
@@ -23,7 +28,7 @@ class Google
                               { :params =>
                                 { :part => 'snippet',
                                   :id => vid_id,
-                                  :key => API_KEY,
+                                  :key => @api_key,
                                 }
                               }
                             )
