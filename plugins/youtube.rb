@@ -28,7 +28,7 @@ module TrickBot
 
     def show_title(m, url, vid_id)
       if @channel_whitelist.include? m.channel
-        m.reply("#{m.user.nick}'s YouTube: #{@Google.youtube_video_title(vid_id)}")
+        m.reply("#{m.user.nick}'s YouTube: #{@google.youtube_video_title(vid_id)}")
       end
     end
   end
