@@ -13,7 +13,6 @@ trickbot = Cinch::Bot.new do
   configure do |c|
     # we're connecting through the chuckinator bouncer
     c.server = 'chat.freenode.net'
-    c.ssl.use = true
     c.user = 'trickbot'
 
     # nick & channels
