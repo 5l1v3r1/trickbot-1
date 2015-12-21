@@ -13,7 +13,12 @@ module TrickBot
     end
 
     def on_kick(m)
-      m.reply "#{m.user.nick}: Ouch!"
+      responses = [
+        "m.reply '#{m.user.nick}: Ouch!'",
+        "m.action_reply 'runs away wimpering.'",
+        "m.action_reply 'cowers with his tail between his legs.'",
+      ]
+      eval(responses.sample)
     end
 
     def on_pet(m)
