@@ -19,11 +19,28 @@ class TrickyHTTP
     'amazon.com'
   ]
 
-  # supported MIME content types for HTML title parsing
-  SUPPORTED_TYPES = [
+  USER_AGENTS = [
+    # chrome current stable & beta
+    'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.0 Safari/537.36',
+
+    # firefox current stable and one release back
+    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0',
+    'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/42.0',
+
+    # we will not emit Internet Explorer or Spartan/Edge User Agent strings
+  ]
+
+  # supported HTML MIME types
+  MIME_TYPES_HTML = [
     'text/html',
     'application/xhtml+xml'
   ]
+
+  # generate supported MIME types by concatenating all supported
+  # groups of MIME types
+  MIME_TYPES_SUPPORTED = []
+  MIME_TYPES_SUPPORTED.concat(MIME_TYPES_HTML)
 
   def initialize
     # setup a logger
@@ -32,9 +49,22 @@ class TrickyHTTP
     @logger.info('TrickyHTTP library starting up')
   end
 
+  def parse_html(html)
+    # parse the body of the HTML response
+    begin
+      body = Nokogiri::HTML(html)
+      title = body.css("title")[0].text
+      @logger.debug("title: #{title}")
+      return title
+    rescue Exception => e
+      @logger.debug("not HTML: #{e}")
+      return "not HTML: #{e}"
+    end
+  end
+
   def page_title(url)
 
-    @logger.debug("resolving page title for #{url}")
+    @logger.debug("resolving page title: #{url}")
 
     # validate the input URL via ruby
     uri = nil
@@ -56,6 +86,9 @@ class TrickyHTTP
       return nil
     end
 
+    # select a user agent for this transaction
+    user_agent = USER_AGENTS.sample
+
     # setup the HTTP object
     http = Net::HTTP.new(uri.hostname, uri.port)
     if 'https'.eql? uri.scheme
@@ -64,10 +97,10 @@ class TrickyHTTP
     end
 
     # make a HEAD request to the server
-    @logger.info("requesting HEAD of: #{uri}")
+    @logger.info("requesting HEAD: #{uri}")
     req_head = Net::HTTP::Head.new(uri)
     req_head['Accept'] = '*/*'
-    req_head['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+    req_head['User-Agent'] = user_agent
 
     # request info
     req_head.each_header do |header, value|
@@ -97,17 +130,18 @@ class TrickyHTTP
     #
     # 3.  FUTURE - follow redirects, but don't cache permanent ones
     #
-    res_type = MIME::Types[res_head['Content-Type']]
-    if (res_head.code.to_i == 200 and SUPPORTED_TYPES.include? res_type.first) or
+    res_head_type = MIME::Types[res_head['Content-Type']]
+    if (res_head.code.to_i == 200 and MIME_TYPES_SUPPORTED.include? res_head_type.first) or
         res_head.code.to_i == 405
       # GET the rest of the URIs body
-      @logger.info("GETting body of \"#{uri}\"")
+      @logger.info("GETting body: #{uri}")
       req = Net::HTTP::Get.new(uri)
       req['Accept'] = '*/*'
-      req['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'
+      req['User-Agent'] = user_agent
       res = http.request(req)
+      res_type = MIME::Types[res['Content-Type']]
 
-      if SUPPORTED_TYPES.include? MIME::Types[res['Content-Type']].first
+      if (res.code.to_i == 200 and MIME_TYPES_SUPPORTED.include? res_type.first)
         req.each_header do |header, value|
           @logger.debug("\t#{header}: #{value}")
         end
@@ -118,17 +152,9 @@ class TrickyHTTP
         end
 
         # parse the body of the HTML response
-        begin
-          body = Nokogiri::HTML(res.body)
-          title = body.css("title")[0].text
-          @logger.debug("title: #{title}")
-          return title
-        rescue Exception => e
-          @logger.debug("not HTML: #{e}")
-          return "not HTML: #{e}"
-        end
+        return parse_html(res.body)
       end
-    else
+    rlse
       return nil
     end
   end
