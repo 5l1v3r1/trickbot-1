@@ -37,9 +37,9 @@ trickbot = Cinch::Bot.new do
 end
 
 # setup the loggers
-trickbot.loggers << Cinch::Logger::FormattedLogger.new(File.open('./log/trickbot.log', 'a'))
-trickbot.loggers.level = :debug
-trickbot.loggers.first.level = :debug
+#trickbot.loggers << Cinch::Logger::FormattedLogger.new(File.open('./log/trickbot.log', 'a'))
+#trickbot.loggers.level = :debug
+#trickbot.loggers.first.level = :debug
 
 # define SIGINT handler
 Signal.trap('INT') do
