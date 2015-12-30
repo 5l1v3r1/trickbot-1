@@ -12,11 +12,14 @@ class TrickyHTTP
   # HTTP based plugin or are simply removed due to
   # service provider or developer discretion
   BLACKLIST_HOSTS = [
+    'www.google.com',   # google doesn't like web-scrapers
+    'google.com',       # and they provide an API for that stuff
     'www.youtube.com',
     'youtube.com',
     'youtu.be',
-    'www.amazon.com',
-    'amazon.com'
+    'www.amazon.com',   # amazon doesn't like web-scrapers
+    'amazon.com',
+    'imgur.com',        # imgur page titles are useless
   ]
 
   USER_AGENTS = [
