@@ -6,6 +6,7 @@ require 'net/http'
 require 'net/https'
 require 'mime/types'
 require 'nokogiri'
+require 'RMagick'
 
 class TrickyHTTP
   # these hosts are either handled by a different
@@ -41,7 +42,7 @@ class TrickyHTTP
   ]
 
   # misc MIME typtes
-  MIME_TYPES_MISC = [
+  MIME_TYPES_IMAGE = [
     'image/xpm',
     'image/x-xpixmap',
     'image/bmp',
@@ -55,10 +56,15 @@ class TrickyHTTP
     'image/x-tiff',
   ]
 
+  # misc MIME typtes
+  MIME_TYPES_MISC = [
+  ]
+
   # generate supported MIME types by concatenating all supported
   # groups of MIME types
   MIME_TYPES_SUPPORTED = []
   MIME_TYPES_SUPPORTED.concat(MIME_TYPES_HTML)
+  MIME_TYPES_SUPPORTED.concat(MIME_TYPES_IMAGE)
   MIME_TYPES_SUPPORTED.concat(MIME_TYPES_MISC)
 
   def initialize
@@ -174,9 +180,18 @@ class TrickyHTTP
         if MIME_TYPES_HTML.include? res_type.first
           # parse the body of the HTML response
           return parse_html(res.body)
+        elsif MIME_TYPES_IMAGE.include? res_type.first
+          begin
+            img = Magick::Image.from_blob(res.body).first
+            columns = img.columns
+            rows = img.rows
+            return "#{res_type.first} - #{columns} x #{rows}"
+          rescue
+            return "#{res_type.first} - INVALID IMAGE?"
+          end
         else
-          # just return the content MIME type for now
-          return "content-type: #{res_type.first}"
+          # misc. types, just return the content MIME type
+          return "content-type #{res_type.first}"
         end
       end
     rlse
