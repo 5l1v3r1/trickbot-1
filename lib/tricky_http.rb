@@ -37,13 +37,29 @@ class TrickyHTTP
   # supported HTML MIME types
   MIME_TYPES_HTML = [
     'text/html',
-    'application/xhtml+xml'
+    'application/xhtml+xml',
+  ]
+
+  # misc MIME typtes
+  MIME_TYPES_MISC = [
+    'image/xpm',
+    'image/x-xpixmap',
+    'image/bmp',
+    'image/x-bitmap',
+    'image/x-portable-bitmap',
+    'image/x-windows-bmp',
+    'image/jpeg',
+    'image/pjpeg',
+    'image/png',
+    'image/tiff',
+    'image/x-tiff',
   ]
 
   # generate supported MIME types by concatenating all supported
   # groups of MIME types
   MIME_TYPES_SUPPORTED = []
   MIME_TYPES_SUPPORTED.concat(MIME_TYPES_HTML)
+  MIME_TYPES_SUPPORTED.concat(MIME_TYPES_MISC)
 
   def initialize
     # setup a logger
@@ -137,10 +153,11 @@ class TrickyHTTP
     if (res_head.code.to_i == 200 and MIME_TYPES_SUPPORTED.include? res_head_type.first) or
         res_head.code.to_i == 405
       # GET the rest of the URIs body
-      @logger.info("GETting body: #{uri}")
       req = Net::HTTP::Get.new(uri)
       req['Accept'] = '*/*'
       req['User-Agent'] = user_agent
+
+      @logger.info("GETting body: #{uri}")
       res = http.request(req)
       res_type = MIME::Types[res['Content-Type']]
 
@@ -154,8 +171,13 @@ class TrickyHTTP
           @logger.debug("\t#{header}: #{value}")
         end
 
-        # parse the body of the HTML response
-        return parse_html(res.body)
+        if MIME_TYPES_HTML.include? res_type.first
+          # parse the body of the HTML response
+          return parse_html(res.body)
+        else
+          # just return the content MIME type for now
+          return "content-type: #{res_type.first}"
+        end
       end
     rlse
       return nil
