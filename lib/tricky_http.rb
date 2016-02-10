@@ -77,7 +77,8 @@ class TrickyHTTP
     # parse the body of the HTML response
     begin
       body = Nokogiri::HTML(html)
-      title = body.css("title")[0].text
+      return "Could not parse HTML title element" unless body.at_css("title")
+      title = body.at_css("title").content
       @logger.debug("title: #{title}")
       return title
     rescue Exception => e
