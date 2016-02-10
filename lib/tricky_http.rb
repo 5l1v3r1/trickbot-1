@@ -20,7 +20,6 @@ class TrickyHTTP
     'youtu.be',
     'www.amazon.com',   # amazon doesn't like web-scrapers
     'amazon.com',
-    'imgur.com',        # imgur page titles are useless
   ]
 
   USER_AGENTS = [
