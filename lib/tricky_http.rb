@@ -199,4 +199,12 @@ class TrickyHTTP
   end
 end
 
-#puts TrickyHTTP.page_title('http://code.tutsplus.com/tutorials/8-regular-expressions-you-should-know--net-6149')
+if __FILE__ == $0
+  if ARGV.empty?
+    STDERR.puts "ERROR: No URL provided"
+    STDERR.puts "Usage: #{$0} URL"
+  end
+
+  tricky = TrickyHTTP.new
+  puts tricky.page_title(ARGV[0])
+end
