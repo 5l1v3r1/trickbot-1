@@ -68,7 +68,7 @@ class TrickyHTTP
 
   def initialize
     # setup a logger
-    @logger = Logger.new('./log/tricky_http.log', 12, 'monthly')
+    @logger = Logger.new('./log/tricky_http.log', 'monthly', 12)
     @logger.level = Logger::DEBUG
     @logger.info('TrickyHTTP library starting up')
   end

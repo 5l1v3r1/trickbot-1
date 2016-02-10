@@ -12,11 +12,11 @@ class Google
     # grab the API key
     if api_key.nil?
       raise('Please provide Google Developer API key')
-    end 
+    end
     @api_key = api_key
 
     # setup a logger
-    @logger = Logger.new('./log/google.log', 12, 'monthly')
+    @logger = Logger.new('./log/google.log', 'monthly', 12)
     @logger.level = Logger::DEBUG
     @logger.info('Google library starting up')
   end

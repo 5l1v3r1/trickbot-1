@@ -15,7 +15,7 @@ module TrickBot
       @tricky = TrickyHTTP.new
 
       # setup a logger
-      @logger = Logger.new('./log/page_titles.log', 12, 'monthly')
+      @logger = Logger.new('./log/page_titles.log', 'monthly', 12)
       @logger.level = Logger::DEBUG
       @logger.info('PageTitles plugin starting up')
     end

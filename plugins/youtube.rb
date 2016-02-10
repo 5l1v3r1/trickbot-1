@@ -15,7 +15,7 @@ module TrickBot
       super
 
       # setup a logger
-      @logger = Logger.new('./log/youtube.log', 12, 'monthly')
+      @logger = Logger.new('./log/youtube.log', 'monthly', 12)
       @logger.level = Logger::DEBUG
       @logger.info('YouTube plugin starting up')
     end
