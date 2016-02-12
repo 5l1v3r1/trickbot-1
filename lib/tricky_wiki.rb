@@ -17,10 +17,12 @@ class TrickyWiki
   end
 
   def wiki_search(titles)
-    # best results are when searches for all words
-    # capitalized.  no capitals will rarely produce
-    # good results.
-    titles = titles.split(/ |\_/).map(&:capitalize).join(' ')
+    # capitalize the first word.  sometimes all caps is better,
+    # sometimes not.
+    # no capitals will rarely produce good results.
+    titles = titles.split(/ |\_/)
+    titles.first.capitalize
+    titles = titles.join(' ')
 
     @logger.info("Requesting information about #{titles}")
     response = RestClient.get(API_URL,
