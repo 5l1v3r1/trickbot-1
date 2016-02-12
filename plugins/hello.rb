@@ -15,7 +15,7 @@ module TrickBot
         "m.reply 'Hey, #{m.user.nick}'",
         "m.reply 'Howdy, #{m.user.nick}!'",
         "m.action_reply 'nods to #{m.user.nick}'",
-        "m.reply 'What do you want?!'",
+        "m.reply 'What do you want?'",
       ]
       eval(responses.sample)
     end
@@ -24,7 +24,6 @@ module TrickBot
       responses = [
         "m.reply 'BIDI BIDI BIDI'",
         "m.action_reply 'vents smoke as he whistles and chirps'",
-        "m.reply '#{m.user.nick}: I do say, that's quite uncivilized!'",
         "m.reply '#{m.user.nick}: Ouch!'",
         "m.action_reply 'runs away wimpering.'",
         "m.action_reply 'cowers with his tail between his legs.'",
