@@ -8,12 +8,14 @@ require_relative 'plugins/help'
 require_relative 'plugins/youtube'
 require_relative 'plugins/page_titles'
 require_relative 'plugins/wiki'
+require_relative 'plugins/urban'
 
 # get that sucker up and online
 trickbot = Cinch::Bot.new do
   configure do |c|
     # we're connecting through the chuckinator bouncer
     c.server = 'chat.freenode.net'
+    c.ssl.use = true
     c.user = 'trickbot'
 
     # nick & channels
@@ -30,12 +32,14 @@ trickbot = Cinch::Bot.new do
       TrickBot::YouTube,
       TrickBot::PageTitles,
       TrickBot::Wiki,
+      TrickBot::Urban,
     ]
     c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a }
     c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
                                              :api_key => nil, # TODO replace with your developer API key
                                            }
     c.plugins.options[TrickBot::Wiki] = { :channel_whitelist => c.channels.to_a }
+    c.plugins.options[TrickBot::Urban] = { :channel_whitelist => c.channels.to_a }
   end
 end
 
