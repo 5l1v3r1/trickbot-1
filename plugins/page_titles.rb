@@ -12,12 +12,12 @@ module TrickBot
 
     def initialize(*args)
       super
-      @tricky = TrickyHTTP.new
 
-      # setup a logger
       @logger = Logger.new('./log/page_titles.log', 'monthly', 12)
       @logger.level = Logger::DEBUG
       @logger.info('PageTitles plugin starting up')
+
+      @tricky = TrickyHTTP.new
     end
 
     def on_connect(c)
@@ -25,14 +25,16 @@ module TrickBot
     end
 
     def scrape_page_title(m, url)
-      @logger.debug("#{m.user.nick} posted link in #{m.channel} to #{url}")
-      title = @tricky.page_title(url)
-      if !title.nil? and @channel_whitelist.include? m.channel
-        # compress whitespace down
-        title = title.gsub(/\s+/, ' ')
+      if @channel_whitelist.include? m.channel
+        @logger.debug("#{m.user.nick} posted link in #{m.channel} to #{url}")
+        title = @tricky.page_title(url)
+        if !title.nil?
+          # compress whitespace down
+          title = title.gsub(/\s+/, ' ')
 
-        @logger.debug("#{m.user.nick}'s link: #{title}")
-        m.reply("#{m.user.nick}'s link: #{title}")
+          @logger.debug("#{m.user.nick}'s link: #{title}")
+          m.reply("#{m.user.nick}'s link: #{title}")
+        end
       end
     end
   end

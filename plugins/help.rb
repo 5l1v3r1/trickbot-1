@@ -11,6 +11,7 @@ module TrickBot
       m.reply "- respond to people that say hello, e.g. \"trickbot: hello\""
       m.reply "- resolve titles for URLs posted to channels that point to an HTML document."
       m.reply "- resolve titles for YouTube URLs posted to channels."
+      m.reply "- search wikipedia for you, e.g. \"trickbot: wiki IRC Bot\""
       m.reply "INSTALLED PLUGINS: #{m.bot.config.plugins.plugins.join(", ")}"
     end
   end

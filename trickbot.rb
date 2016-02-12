@@ -7,6 +7,7 @@ require_relative 'plugins/hello'
 require_relative 'plugins/help'
 require_relative 'plugins/youtube'
 require_relative 'plugins/page_titles'
+require_relative 'plugins/wiki'
 
 # get that sucker up and online
 trickbot = Cinch::Bot.new do
@@ -28,11 +29,13 @@ trickbot = Cinch::Bot.new do
       TrickBot::Hello,
       TrickBot::YouTube,
       TrickBot::PageTitles,
+      TrickBot::Wiki,
     ]
     c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a }
     c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
                                              :api_key => nil, # TODO replace with your developer API key
                                            }
+    c.plugins.options[TrickBot::Wiki] = { :channel_whitelist => c.channels.to_a }
   end
 end
 

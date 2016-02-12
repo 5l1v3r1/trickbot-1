@@ -30,8 +30,7 @@ class Google
                                   :id => vid_id,
                                   :key => @api_key,
                                 }
-                              }
-                            )
+                              })
     if response.code != 200
       @logger.info('video not found')
       return 'video not found'
