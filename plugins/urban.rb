@@ -28,7 +28,7 @@ module TrickBot
     def lookup(m, words)
       if @channel_whitelist.include? m.channel
         @logger.debug("#{m.user.nick} in #{m.channel} searched urban dictionary for #{words}")
-        result = @wiki.lookup(words)
+        result = @ud.lookup(words)
         if result
           m.reply("#{result}")
         end
