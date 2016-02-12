@@ -8,7 +8,7 @@ module TrickBot
 
     listen_to :connect, method: :on_connect
 
-    match /(https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w_\.-]*)*\/?)/, use_prefix: false, method: :scrape_page_title
+    match /(https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([+?#&!$;=\[\]~|%{}\/\w_\.-]*)*\/?)/, use_prefix: false, method: :scrape_page_title
 
     def initialize(*args)
       super
