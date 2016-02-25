@@ -9,6 +9,7 @@ require_relative 'plugins/youtube'
 require_relative 'plugins/page_titles'
 require_relative 'plugins/wiki'
 require_relative 'plugins/urban'
+require_relative 'plugins/cards'
 
 # get that sucker up and online
 trickbot = Cinch::Bot.new do
@@ -33,6 +34,7 @@ trickbot = Cinch::Bot.new do
       TrickBot::PageTitles,
       TrickBot::Wiki,
       TrickBot::Urban,
+      TrickBot::Cards,
     ]
     c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a }
     c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
