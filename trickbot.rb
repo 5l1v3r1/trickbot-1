@@ -38,8 +38,6 @@ trickbot = Cinch::Bot.new do
     c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
                                              :api_key => nil, # TODO replace with your developer API key
                                            }
-    c.plugins.options[TrickBot::Wiki] = { :channel_whitelist => c.channels.to_a }
-    c.plugins.options[TrickBot::Urban] = { :channel_whitelist => c.channels.to_a }
   end
 end
 

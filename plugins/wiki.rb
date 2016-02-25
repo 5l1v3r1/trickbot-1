@@ -6,8 +6,6 @@ module TrickBot
   class Wiki
     include Cinch::Plugin
 
-    listen_to :connect, method: :on_connect
-
     match /wiki (.+)$/, method: :wiki_lookup
 
     def initialize(*args)
@@ -19,10 +17,6 @@ module TrickBot
 
       # pass in our logger to TrickyWiki
       @wiki = TrickyWiki.new(@logger)
-    end
-
-    def on_connect(c)
-      @channel_whitelist = config[:channel_whitelist] || raise("Missing required argument: :channel_whitelist")
     end
 
     def wiki_lookup(m, titles)
