@@ -7,7 +7,7 @@ module TrickBot
 
     CARDS_URL = 'http://www.cardsagainsthumanity.com/wcards.txt'
 
-    match /((.*_+[^_]+)+)/, method: :lets_play
+    match /(([^_]*_+[^_]*)+)/, method: :lets_play
 
     def initialize(*args)
       super
