@@ -14,6 +14,9 @@ TrickBot currently performs the following functions:
 * Responds to users saying hello, e.g. "trickbot: hello."
 * Resolves titles for HTML URLs posted to channels he lurks.
 * Resolves titles for YouTube URLs posted to channels he lurks.
+* search wikipedia for you, e.g. "trickbot: wiki IRC Bot"
+* search urban dictionary for you, e.g. "trickbot: urban urban dictionary"
+* generate a BOFH excuse, e.g. "trickbot: bofh" or "trickbot: excuse"
 
 Installation
 ------------
@@ -21,7 +24,7 @@ Installation
 Installation is simple.  Follow these simple steps:
 
 * Clone this repository
-* Install ruby, cinch, nokogiri, and RMagick through your platform's package manager or
+* Install ruby, cinch, httparty, nokogiri, and RMagick through your platform's package manager or
 through the Ruby gem utility.
 * Edit trickbot.rb to adjust the following:
   * Edit your connection info, i.e. server, username, nick, channels
