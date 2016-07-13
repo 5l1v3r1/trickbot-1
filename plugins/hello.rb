@@ -4,9 +4,9 @@ module TrickBot
   class Hello
     include Cinch::Plugin
 
-    match /hello|hi|hey/, method: :on_hello
-    match /kicks (the bot|trickbot)/, use_prefix: false, react_on: :action, method: :on_kick
-    match /p[ea]ts (the bot|trickbot)/, use_prefix: false, react_on: :action, method: :on_pet
+    match /hello|hi|hey/i, method: :on_hello
+    match /kicks (the bot|trickbot)/i, use_prefix: false, react_on: :action, method: :on_kick
+    match /p[ea]ts (the bot|trickbot)/i, use_prefix: false, react_on: :action, method: :on_pet
 
     def on_hello(m)
       responses = [

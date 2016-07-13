@@ -4,7 +4,7 @@ module TrickBot
   class Help
     include Cinch::Plugin
 
-    match /help/
+    match /help/i
 
     def execute(m)
       m.user.notice "Hello, #{m.user.nick}. I'm #{m.bot.config.nick}.  I do the following:"

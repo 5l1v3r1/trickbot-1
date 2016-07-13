@@ -6,7 +6,7 @@ module TrickBot
   class Wiki
     include Cinch::Plugin
 
-    match /wiki (.+)$/, method: :wiki_lookup
+    match /wiki (.+)$/i, method: :wiki_lookup
 
     def initialize(*args)
       super

@@ -7,7 +7,7 @@ module TrickBot
 
     BOFH_URI = "http://pages.cs.wisc.edu/~ballard/bofh/excuses"
 
-    BOFH_REGEX = /.*(excuse|bofh).*/
+    BOFH_REGEX = /.*(excuse|bofh).*/i
 
     match BOFH_REGEX, method: :bofh
 

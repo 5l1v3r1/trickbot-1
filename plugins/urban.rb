@@ -6,7 +6,7 @@ module TrickBot
   class Urban
     include Cinch::Plugin
 
-    match /urban (.+)$/, method: :lookup
+    match /urban (.+)$/i, method: :lookup
 
     def initialize(*args)
       super
