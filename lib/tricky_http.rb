@@ -4,6 +4,7 @@ require 'logger'
 require 'uri'
 require 'net/http'
 require 'net/https'
+require 'socksify/http'
 require 'mime/types'
 require 'nokogiri'
 require 'RMagick'
@@ -13,13 +14,13 @@ class TrickyHTTP
   # HTTP based plugin or are simply removed due to
   # service provider or developer discretion
   BLACKLIST_HOSTS = [
-    'www.google.com',   # google doesn't like web-scrapers
-    'google.com',       # and they provide an API for that stuff
+    #'www.google.com',   # google doesn't like web-scrapers
+    #'google.com',       # and they provide an API for that stuff
     'www.youtube.com',
     'youtube.com',
     'youtu.be',
-    'www.amazon.com',   # amazon doesn't like web-scrapers
-    'amazon.com',
+    #'www.amazon.com',   # amazon doesn't like web-scrapers
+    #'amazon.com',
   ]
 
   USER_AGENTS = [
@@ -38,6 +39,7 @@ class TrickyHTTP
   MIME_TYPES_HTML = [
     'text/html',
     'application/xhtml+xml',
+    'text/x-web-markdown',
   ]
 
   # misc MIME typtes
@@ -66,7 +68,19 @@ class TrickyHTTP
   MIME_TYPES_SUPPORTED.concat(MIME_TYPES_IMAGE)
   MIME_TYPES_SUPPORTED.concat(MIME_TYPES_MISC)
 
-  def initialize
+  def initialize(http_opts = {})
+    defaults = {
+      :max_redirects => 3,
+      :proxy_enabled => false,
+      :proxy_host => 'proxy.example.com',
+      :proxy_port => 3128,
+      :proxy_socks => false,
+      :proxy_auth_enabled => false,
+      :proxy_auth_user => '',
+      :proxy_auth_pass => '',
+    }
+    @http_opts = defaults.merge(http_opts)
+
     # setup a logger
     @logger = Logger.new('./log/tricky_http.log', 'monthly', 12)
     @logger.level = Logger::DEBUG
@@ -87,7 +101,10 @@ class TrickyHTTP
     end
   end
 
-  def page_title(url)
+  def page_title(url, num_redirects = 0)
+    if num_redirects >= @http_opts[:max_redirects]
+      return "Error, too many redirects."
+    end
 
     @logger.debug("resolving page title: #{url}")
 
@@ -111,20 +128,58 @@ class TrickyHTTP
       return nil
     end
 
-    # select a user agent for this transaction
-    user_agent = USER_AGENTS.sample
+    # TODO fix this fugly shit, seriously
 
-    # setup the HTTP object
-    http = Net::HTTP.new(uri.hostname, uri.port)
-    if 'https'.eql? uri.scheme
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    # are we using a proxy?
+    if @http_opts[:proxy_enabled]
+      if @http_opts[:proxy_socks]
+        # setup a socks proxy
+
+        # should we set authentication?
+        if @http_opts[:proxy_auth_enabled]
+          TCPSocket.socks_username = @http_opts[:proxy_auth_user]
+          TCPSocket.socks_password = @http_opts[:proxy_auth_pass]
+        end
+
+        # setup our proxy
+        proxy = Net::HTTP::SOCKSProxy(@http_opts[:proxy_host],
+                                      @http_opts[:proxy_port])
+        http = proxy.start(uri.host, uri.port,
+                           :use_ssl => 'https'.eql?(uri.scheme),
+                           :verify_mode => OpenSSL::SSL::VERIFY_NONE)
+      else
+        # setup a regular http proxy
+
+        # sould we set authentication?
+        if @http_opts[:proxy_auth_enabled]
+          proxy = Net::HTTP::Proxy(@http_opts[:proxy_host],
+                                   @http_opts[:proxy_port],
+                                   @http_opts[:proxy_auth_user],
+                                   @http_opts[:proxy_auth_pass])
+        else
+          proxy = Net::HTTP::Proxy(@http_opts[:proxy_host],
+                                   @http_opts[:proxy_port])
+        end
+        http = proxy.start(uri.host, uri.port,
+                           :use_ssl => 'https'.eql?(uri.scheme),
+                           :verify_mode => OpenSSL::SSL::VERIFY_NONE)
+      end
+    else
+      # setup the HTTP object
+      http = Net::HTTP.new(uri.hostname, uri.port)
+      if 'https'.eql? uri.scheme
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
     end
 
     # make a HEAD request to the server
     @logger.info("requesting HEAD: #{uri}")
     req_head = Net::HTTP::Head.new(uri)
     req_head['Accept'] = '*/*'
+
+    # select and set a user agent for this transaction
+    user_agent = USER_AGENTS.sample
     req_head['User-Agent'] = user_agent
 
     # request info
@@ -193,8 +248,26 @@ class TrickyHTTP
           # misc. types, just return the content MIME type
           return "content-type #{res_type.first}"
         end
+      elsif [ 301, 302, 303, 307, 308 ].include?(res.code.to_i)
+        # handle redirect from the GET response headers
+        @logger.debug("GET response #{res.code} redirect to #{res_head['Location']}")
+        if res['Location'] == url
+          @logger.debug("Error, redirects to same URL.")
+          return "Error, redirects to same URL."
+        end
+
+        return page_title(res['Location'], num_redirects + 1)
       end
-    rlse
+    elsif [ 301, 302, 303, 307, 308 ].include?(res_head.code.to_i)
+      if res_head['Location'] == url
+        @logger.debug("Error, redirects to same URL.")
+        return "Error, redirects to same URL."
+      end
+
+      # handle redirect from the HEAD response headers
+      @logger.debug("HEAD response #{res_head.code} redirect to #{res_head['Location']}")
+      return page_title(res_head['Location'], num_redirects + 1)
+    else
       return nil
     end
   end

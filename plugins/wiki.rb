@@ -6,7 +6,7 @@ module TrickBot
   class Wiki
     include Cinch::Plugin
 
-    match /wiki (.+)$/i, method: :wiki_lookup
+    match /wiki (.+)$/, method: :wiki_lookup
 
     def initialize(*args)
       super
@@ -20,12 +20,10 @@ module TrickBot
     end
 
     def wiki_lookup(m, titles)
-      if @channel_whitelist.include? m.channel
-        @logger.debug("#{m.user.nick} in #{m.channel} searched wikipedia for #{titles}")
-        result = @wiki.wiki_search(titles)
-        if result
-          m.reply("#{result}")
-        end
+      @logger.debug("#{m.user.nick} in #{m.channel} searched wikipedia for #{titles}")
+      result = @wiki.wiki_search(titles)
+      if result
+        m.reply("#{result}")
       end
     end
   end

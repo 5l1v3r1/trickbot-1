@@ -16,12 +16,11 @@ module TrickBot
       @logger = Logger.new('./log/page_titles.log', 'monthly', 12)
       @logger.level = Logger::DEBUG
       @logger.info('PageTitles plugin starting up')
-
-      @tricky = TrickyHTTP.new
     end
 
     def on_connect(c)
       @channel_whitelist = config[:channel_whitelist] || raise("Missing required argument: :channel_whitelist")
+      @tricky = TrickyHTTP.new(http_opts = config[:http_opts])
     end
 
     def scrape_page_title(m, url)

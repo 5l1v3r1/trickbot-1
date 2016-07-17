@@ -6,7 +6,9 @@ module TrickBot
   class Urban
     include Cinch::Plugin
 
-    match /urban (.+)$/i, method: :lookup
+    listen_to :connect, method: :on_connect
+
+    match /urban (.+)$/, method: :lookup
 
     def initialize(*args)
       super
@@ -20,12 +22,10 @@ module TrickBot
     end
 
     def lookup(m, words)
-      if @channel_whitelist.include? m.channel
-        @logger.debug("#{m.user.nick} in #{m.channel} searched urban dictionary for #{words}")
-        result = @ud.lookup(words)
-        if result
-          m.reply("#{result}")
-        end
+      @logger.debug("#{m.user.nick} in #{m.channel} searched urban dictionary for #{words}")
+      result = @ud.lookup(words)
+      if result
+        m.reply("#{result}")
       end
     end
   end
