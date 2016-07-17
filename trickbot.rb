@@ -36,7 +36,7 @@ trickbot = Cinch::Bot.new do
       TrickBot::Wiki,
       TrickBot::Urban,
       TrickBot::Cards,
-      TrickBot::BofhExcuses,
+      TrickBot::BofhExcuse,
     ]
     c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a }
     c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
