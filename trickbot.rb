@@ -38,7 +38,17 @@ trickbot = Cinch::Bot.new do
       TrickBot::Cards,
       TrickBot::BofhExcuse,
     ]
-    c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a }
+    c.plugins.options[TrickBot::PageTitles] = { :channel_whitelist => c.channels.to_a,
+                                                :http_opts => { # set proxy settings here
+                                                  :proxy_enabled => false,
+                                                  :proxy_host => 'proxy.example.com',
+                                                  :proxy_port => 3128,
+                                                  :proxy_socks => false,
+                                                  :proxy_auth_enabled => false,
+                                                  :proxy_auth_user => '',
+                                                  :proxy_auth_pass => '',
+                                                }
+                                              }
     c.plugins.options[TrickBot::YouTube] = { :channel_whitelist => c.channels.to_a,
                                              :api_key => nil, # TODO replace with your developer API key
                                            }
