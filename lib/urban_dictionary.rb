@@ -27,7 +27,7 @@ class UrbanDictionary
     # wikipedia knows about it, parse the extract
     batch = JSON.parse(response)
     if !batch['list'].empty?
-      return batch['list'].first['definition']
+      return batch['list'].sample['definition']
     else
       return "no results for #{search}"
     end
