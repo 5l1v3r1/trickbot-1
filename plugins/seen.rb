@@ -12,8 +12,10 @@ module TrickBot
 
     listen_to :channel
 
+    lulwut = /^(l([ou]|aw)l)?wh?[aou]t/i
+
     match /seen (.+)/, method: :seen
-    match /^(l[ou]l)?wh?[au]t/i, use_prefix: false, method: :what
+    match lulwut, use_prefix: false, method: :what
 
     def initialize(*args)
       super
@@ -22,7 +24,7 @@ module TrickBot
     end
 
     def listen(m)
-      return if m.message =~ /^(l[ou]l)?wh?[au]t/i
+      return if m.message =~ lulwut
       @users[m.user.nick] = SeenStruct.new(m.user, m.channel, m.message, Time.now)
       @last = m.message
     end
