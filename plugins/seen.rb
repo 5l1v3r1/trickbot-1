@@ -41,6 +41,7 @@ module TrickBot
 
     def what(m, nick)
       m.reply @last.upcase
+      @last = m.message
     end
   end
 end
